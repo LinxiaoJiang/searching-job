@@ -1,0 +1,17 @@
+# Personal configuration (copy from config.example.json)
+config.json
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# Local run artefacts
+/tmp/
+tmp/
+*.tmp
+kept.json
+rejected.json
+digest.md

@@ -1,0 +1,54 @@
+[
+  {
+    "company": "Example Analytics Pty Ltd",
+    "job_title": "Graduate Data Analyst",
+    "ad_url": "https://www.seek.com.au/job/00000001",
+    "website": "https://www.example.com",
+    "street_address": "Level 12, Example Tower, 100 Sample Street",
+    "suburb": "Melbourne CBD VIC 3000",
+    "headcount": "1,001-5,000",
+    "lead_name": "Alex Citizen",
+    "lead_title": "Talent Acquisition Lead",
+    "lead_linkedin": "https://www.linkedin.com/in/example-alex",
+    "lead_email": "alex.citizen@example.com"
+  },
+  {
+    "company": "Demo Design Group",
+    "job_title": "Junior Project Coordinator",
+    "ad_url": "https://au.indeed.com/viewjob?jk=0000000000000002",
+    "website": "https://www.example.org",
+    "street_address": "Suite 4, 25 Placeholder Road",
+    "suburb": "Richmond VIC 3121",
+    "headcount": "201-500",
+    "lead_name": "Sam Sample",
+    "lead_title": "Operations Manager",
+    "lead_linkedin": "",
+    "lead_email": null
+  },
+  {
+    "company": "Tiny Startup Co",
+    "job_title": "Graduate Software Engineer",
+    "ad_url": "https://www.linkedin.com/jobs/view/0000000003",
+    "website": "https://www.example.net",
+    "street_address": "1 Small Lane",
+    "suburb": "Fitzroy VIC 3065",
+    "headcount": "11-50",
+    "lead_name": "Jo Placeholder",
+    "lead_title": "Founder",
+    "lead_linkedin": "https://www.linkedin.com/in/example-jo",
+    "lead_email": "none"
+  },
+  {
+    "company": "No Website Ltd",
+    "job_title": "Graduate Analyst",
+    "ad_url": "https://www.seek.com.au/job/00000004",
+    "website": "",
+    "street_address": "50 Nowhere Street",
+    "suburb": "Southbank VIC 3006",
+    "headcount": "501-1,000",
+    "lead_name": "Pat Example",
+    "lead_title": "HR Business Partner",
+    "lead_linkedin": "",
+    "lead_email": ""
+  }
+]
