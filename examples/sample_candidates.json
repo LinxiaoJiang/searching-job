@@ -26,6 +26,20 @@
     "lead_email": null
   },
   {
+    "company": "Backfill Insights Co",
+    "job_title": "Company outreach (no open ad)",
+    "has_ad": false,
+    "ad_url": "none",
+    "website": "https://www.backfill.example",
+    "street_address": "80 Queen Street",
+    "suburb": "Melbourne VIC 3000",
+    "headcount": "100-200",
+    "lead_name": "Riley Example",
+    "lead_title": "Principal Consultant",
+    "lead_linkedin": "https://www.linkedin.com/in/example-riley",
+    "lead_email": null
+  },
+  {
     "company": "Tiny Startup Co",
     "job_title": "Graduate Software Engineer",
     "ad_url": "https://www.linkedin.com/jobs/view/0000000003",
@@ -37,6 +51,19 @@
     "lead_title": "Founder",
     "lead_linkedin": "https://www.linkedin.com/in/example-jo",
     "lead_email": "none"
+  },
+  {
+    "company": "Mega Global Ltd",
+    "job_title": "Graduate Analyst",
+    "ad_url": "https://www.seek.com.au/job/00000005",
+    "website": "https://www.megaglobal.example",
+    "street_address": "1 Big Street",
+    "suburb": "Docklands VIC 3008",
+    "headcount": "10,001+",
+    "lead_name": "Pat Example",
+    "lead_title": "HR Business Partner",
+    "lead_linkedin": "",
+    "lead_email": ""
   },
   {
     "company": "No Website Ltd",

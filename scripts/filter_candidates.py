@@ -5,13 +5,15 @@ Reads a JSON array of candidates from --input or stdin and writes the kept
 candidates to stdout as JSON.
 
 Mechanical checks applied here:
-  * required fields present: company, job_title, ad_url, website
-  * company headcount >= min_company_size (lower bound of a band such as
-    "1,001-5,000"; candidates with no headcount are kept and flagged)
+  * required fields: company, job_title, website always; ad_url only when the
+    candidate has an open ad (has_ad true / ad_url is an http(s) URL)
+  * company headcount within min_company_size .. max_company_size (0 disables
+    either bound; lower/upper bound of a LinkedIn band is used)
 
-Everything else - matching search_keywords and location, and honouring the
-free-text other_requirements - is the agent's job during research. This
-script prints those settings to stderr so the agent keeps them in view.
+Everything else - matching search_keywords and location, honouring
+other_requirements, and fill-to-target backfill - is the agent's job during
+research. This script prints those settings to stderr so the agent keeps them
+in view.
 """
 from __future__ import annotations
 
@@ -24,8 +26,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from load_config import ConfigError, describe, load_config  # noqa: E402
 
-REQUIRED_FIELDS = ("company", "job_title", "ad_url", "website")
-
 
 def parse_min_headcount(headcount: str | None) -> int | None:
     if not headcount:
@@ -34,13 +34,36 @@ def parse_min_headcount(headcount: str | None) -> int | None:
     return min(nums) if nums else None
 
 
-def reason_reject(item: dict, min_size: int) -> str | None:
-    for field in REQUIRED_FIELDS:
+def parse_max_headcount(headcount: str | None) -> int | None:
+    if not headcount:
+        return None
+    nums = [int(x.replace(",", "")) for x in re.findall(r"\d[\d,]*", str(headcount))]
+    return max(nums) if nums else None
+
+
+def has_open_ad(item: dict) -> bool:
+    if item.get("has_ad") is False:
+        return False
+    ad = str(item.get("ad_url") or "").strip().lower()
+    if ad in ("", "none", "n/a", "na"):
+        return False
+    return True
+
+
+def reason_reject(item: dict, min_size: int, max_size: int) -> str | None:
+    for field in ("company", "job_title", "website"):
         if not str(item.get(field) or "").strip():
             return f"missing_{field}"
-    hc = parse_min_headcount(item.get("headcount"))
-    if min_size and hc is not None and hc < min_size:
+    if has_open_ad(item):
+        ad = str(item.get("ad_url") or "").strip()
+        if not ad.startswith("http"):
+            return "missing_ad_url"
+    hc_lo = parse_min_headcount(item.get("headcount"))
+    hc_hi = parse_max_headcount(item.get("headcount"))
+    if min_size and hc_lo is not None and hc_lo < min_size:
         return f"company_size_under_{min_size}"
+    if max_size and hc_hi is not None and hc_hi > max_size:
+        return f"company_size_over_{max_size}"
     return None
 
 
@@ -68,12 +91,13 @@ def main() -> int:
         return 2
 
     min_size = cfg["min_company_size"]
+    max_size = cfg["max_company_size"]
     kept, rejected, no_headcount = [], [], []
     for item in candidates:
         if not isinstance(item, dict):
             rejected.append({"reason": "not_an_object", "item": item})
             continue
-        why = reason_reject(item, min_size)
+        why = reason_reject(item, min_size, max_size)
         if why:
             rejected.append({"reason": why, "item": item})
         else:
@@ -86,7 +110,7 @@ def main() -> int:
 
     print(json.dumps(kept, ensure_ascii=False, indent=2))
 
-    print("# config in force (agent: apply keywords, location and other_requirements during research)", file=sys.stderr)
+    print("# config in force (agent: apply keywords, location, other_requirements and fill-to-target during research)", file=sys.stderr)
     for line in describe(cfg).splitlines():
         print(f"#   {line}", file=sys.stderr)
     if no_headcount:
@@ -94,7 +118,8 @@ def main() -> int:
     for r in rejected:
         name = r["item"].get("company") if isinstance(r["item"], dict) else r["item"]
         print(f"# rejected: {name} ({r['reason']})", file=sys.stderr)
-    print(f"# kept={len(kept)} rejected={len(rejected)}", file=sys.stderr)
+    with_ad = sum(1 for i in kept if has_open_ad(i))
+    print(f"# kept={len(kept)} with_ad={with_ad} no_ad={len(kept) - with_ad} rejected={len(rejected)} target={cfg['target_company_count']}", file=sys.stderr)
     return 0
 
 

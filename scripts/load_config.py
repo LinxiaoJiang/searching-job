@@ -20,7 +20,15 @@ from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-ALLOWED_KEYS = ("search_keywords", "location", "min_company_size", "other_requirements")
+ALLOWED_KEYS = (
+    "search_keywords",
+    "location",
+    "min_company_size",
+    "max_company_size",
+    "target_company_count",
+    "backfill_company_keywords",
+    "other_requirements",
+)
 
 
 class ConfigError(Exception):
@@ -29,6 +37,15 @@ class ConfigError(Exception):
 
 def default_config_path() -> Path:
     return REPO_ROOT / "config.json"
+
+
+def _nonneg_int(value: Any, name: str, *, allow_zero: bool = True) -> int:
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ConfigError(f"{name} must be a non-negative number")
+    n = int(value)
+    if n < 0 or (not allow_zero and n < 1):
+        raise ConfigError(f"{name} must be a non-negative number" if allow_zero else f"{name} must be at least 1")
+    return n
 
 
 def validate_config(data: Any) -> dict:
@@ -53,9 +70,19 @@ def validate_config(data: Any) -> dict:
     if not isinstance(location, str):
         raise ConfigError("location must be a string")
 
-    min_size = data.get("min_company_size", 0)
-    if isinstance(min_size, bool) or not isinstance(min_size, (int, float)) or min_size < 0:
-        raise ConfigError("min_company_size must be a non-negative number (0 disables the check)")
+    min_size = _nonneg_int(data.get("min_company_size", 0), "min_company_size")
+    max_size = _nonneg_int(data.get("max_company_size", 0), "max_company_size")
+    if max_size and min_size and max_size < min_size:
+        raise ConfigError("max_company_size must be >= min_company_size (or 0 to disable)")
+
+    target = _nonneg_int(data.get("target_company_count", 5), "target_company_count", allow_zero=False)
+
+    backfill = data.get("backfill_company_keywords", [])
+    if backfill is None:
+        backfill = []
+    if not isinstance(backfill, list) or not all(isinstance(k, str) for k in backfill):
+        raise ConfigError("backfill_company_keywords must be an array of strings")
+    backfill = [k.strip() for k in backfill if k.strip()]
 
     other = data.get("other_requirements", "")
     if not isinstance(other, str):
@@ -64,7 +91,10 @@ def validate_config(data: Any) -> dict:
     return {
         "search_keywords": keywords,
         "location": location.strip(),
-        "min_company_size": int(min_size),
+        "min_company_size": min_size,
+        "max_company_size": max_size,
+        "target_company_count": target,
+        "backfill_company_keywords": backfill,
         "other_requirements": other.strip(),
     }
 
@@ -85,10 +115,14 @@ def load_config(path: str | Path | None = None) -> dict:
 
 def describe(cfg: dict) -> str:
     """Human-readable summary, handy for printing to stderr for the agent."""
+    bf = ", ".join(cfg["backfill_company_keywords"]) or "(derive from search_keywords)"
     lines = [
         f"search_keywords: {', '.join(cfg['search_keywords'])}",
         f"location: {cfg['location'] or '(not set)'}",
         f"min_company_size: {cfg['min_company_size']}",
+        f"max_company_size: {cfg['max_company_size'] or '(disabled)'}",
+        f"target_company_count: {cfg['target_company_count']}",
+        f"backfill_company_keywords: {bf}",
         f"other_requirements: {cfg['other_requirements'] or '(none)'}",
     ]
     return "\n".join(lines)

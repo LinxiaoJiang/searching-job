@@ -2,5 +2,8 @@
   "search_keywords": [],
   "location": "Melbourne VIC",
   "min_company_size": 100,
+  "max_company_size": 5000,
+  "target_company_count": 5,
+  "backfill_company_keywords": [],
   "other_requirements": ""
 }

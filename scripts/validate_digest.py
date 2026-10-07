@@ -8,7 +8,7 @@ import re
 import sys
 from pathlib import Path
 
-F1 = re.compile(r"^\*\*[^*]+\*\* — .+ — \[ad\]\(https?://[^)\s]+\)$")
+F1 = re.compile(r"^\*\*[^*]+\*\* — .+ — (?:\[ad\]\(https?://[^)\s]+\)|none)$")
 F2 = re.compile(r"^[^—]+, [^—]+ — [^—]+ — \[website\]\(https?://[^)\s]+\)$")
 F3 = re.compile(r"^[^—]+ — [^—]+ — (?:\[LinkedIn\]\(https?://[^)\s]+\)|none) — (?:[\w.+-]+@[\w.-]+\.\w+|none)$")
 NUMBERED = re.compile(r"^\s*(?:\d+[.)]|#\d+)\s")
@@ -34,7 +34,6 @@ def main() -> int:
     blocks = split_blocks(text)
     for idx, block in enumerate(blocks, 1):
         lines = block.split("\n")
-        # Expect exactly: field, blank, field, blank, field
         if len(lines) != 5 or lines[1] != "" or lines[3] != "":
             errors.append(
                 f"job {idx}: expected 3 fields separated by single blank lines, "
@@ -46,7 +45,10 @@ def main() -> int:
             if NUMBERED.match(f):
                 errors.append(f"job {idx}: numbering is not allowed")
         if not F1.match(f1):
-            errors.append(f"job {idx} field 1: expected '**Company** — Title — [ad](url)'")
+            errors.append(
+                f"job {idx} field 1: expected '**Company** — Title — [ad](url)' "
+                "or '**Company** — Title — none'"
+            )
         if not F2.match(f2):
             errors.append(f"job {idx} field 2: expected 'Street, Suburb — headcount — [website](url)'")
         else:
