@@ -2,7 +2,7 @@
 
 [English (Australian)](README.md)
 
-适用于任意行业的求职外联短名单 skill。配好关键词与筛选条件后，助手在 SEEK / Indeed / LinkedIn Jobs **不登录**搜索，补齐公司地址、人数与一位联系人，并用自带脚本输出固定格式 digest。除非你明确要求，否则不会代发外联。
+适用于任意行业的求职外联短名单 skill。配好关键词与筛选条件后，助手在 SEEK / Indeed / LinkedIn Jobs 搜索，补齐公司地址、人数与一位联系人，并用自带脚本输出固定格式 digest。除非你明确要求，否则不会代发外联。
 
 MIT — 见 [LICENSE](LICENSE)。
 
@@ -26,7 +26,7 @@ python3 scripts/load_config.py
 |---|---|
 | `search_keywords` | **必填。** 岗位搜索词。 |
 | `location` | 如 `Melbourne VIC`。 |
-| `min_company_size` / `max_company_size` | LinkedIn 人数区间上下限；`0` = 不检查。 |
+| `min_company_size` / `max_company_size` | 公司人数上下限；`0` = 不检查。 |
 | `target_company_count` | 每次目标公司数（默认 `5`）。 |
 | `backfill_company_keywords` | 有广告不足目标时搜相关公司的词；空则从 `search_keywords` 推导。 |
 | `other_requirements` | 调研时由助手执行的自由文本规则。 |
@@ -74,7 +74,7 @@ Street, Suburb — headcount — [website](url)
 Name — title — [LinkedIn](url) — email|none
 ```
 
-无空缺：`**Company** — Company outreach (no open ad) — none`。地址去掉 Level/Suite/州/邮编；CBD 显示为城市名；人数如 `1001~5000`。
+无空缺：`**Company** — Company outreach (no open ad) — none`。
 
 ## 目录
 
@@ -82,4 +82,4 @@ Name — title — [LinkedIn](url) — email|none
 SKILL.md · config.example.json · scripts/ · examples/ · README*.md · LICENSE
 ```
 
-Python 3.8+，无第三方依赖。平台：SEEK、Indeed、LinkedIn Jobs — 仅不登录搜索，不绕过验证码。
+Python 3.8+，无第三方依赖。平台：SEEK、Indeed、LinkedIn Jobs。

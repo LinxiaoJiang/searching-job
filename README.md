@@ -2,7 +2,7 @@
 
 [简体中文](README.zh-CN.md)
 
-Agent skill for a job-outreach shortlist. Configure keywords and filters; the agent searches SEEK, Indeed and LinkedIn Jobs **logged out**, finds company address / headcount / a contact, and emits a fixed-format digest via the bundled scripts. Never sends outreach unless you ask.
+Agent skill for a job-outreach shortlist. Configure keywords and filters; the agent searches SEEK, Indeed and LinkedIn Jobs, finds company address / headcount / a contact, and emits a fixed-format digest via the bundled scripts. Never sends outreach unless you ask.
 
 MIT — see [LICENSE](LICENSE).
 
@@ -24,9 +24,9 @@ python3 scripts/load_config.py
 
 | Field | Notes |
 |---|---|
-| `search_keywords` | **Required.** Job search terms (SEEK-style). |
+| `search_keywords` | **Required.** Job search terms. |
 | `location` | e.g. `Melbourne VIC`. |
-| `min_company_size` / `max_company_size` | LinkedIn headcount band bounds; `0` = off. |
+| `min_company_size` / `max_company_size` | Company headcount bounds; `0` = off. |
 | `target_company_count` | Aim for this many companies each run (default `5`). |
 | `backfill_company_keywords` | Company search terms when ads are short of the target; empty → derive from `search_keywords`. |
 | `other_requirements` | Free-text rules the agent applies while researching. |
@@ -74,7 +74,7 @@ Street, Suburb — headcount — [website](url)
 Name — title — [LinkedIn](url) — email|none
 ```
 
-No vacancy: `**Company** — Company outreach (no open ad) — none`. Addresses drop Level/Suite/state/postcode; CBD → city name; headcount like `1001~5000`.
+No vacancy: `**Company** — Company outreach (no open ad) — none`.
 
 ## Layout
 
@@ -82,4 +82,4 @@ No vacancy: `**Company** — Company outreach (no open ad) — none`. Addresses 
 SKILL.md · config.example.json · scripts/ · examples/ · README*.md · LICENSE
 ```
 
-Python 3.8+, no third-party packages. Job boards: SEEK, Indeed, LinkedIn Jobs — logged out only; no captcha bypass.
+Python 3.8+, no third-party packages. Job boards: SEEK, Indeed, LinkedIn Jobs.
